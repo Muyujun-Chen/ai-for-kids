@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>你好，AI！—— 给小朋友的人工智能探险</title>
+<style>
+  @font-face {
+    font-family: 'Bricolage Grotesque';
+    src: url('./_shared/fonts/BricolageGrotesque-Bold.ttf') format('truetype');
+    font-weight: 700;
+  }
+  @font-face {
+    font-family: 'Bricolage Grotesque';
+    src: url('./_shared/fonts/BricolageGrotesque-Regular.ttf') format('truetype');
+    font-weight: 400;
+  }
+
+  :root {
+    --bg: #FFF9F0;
+    --bg2: #FFFFFF;
+    --ink: #2D3142;
+    --muted: #6B7280;
+    --rule: #F0E2CC;
+    --accent: #FF6B6B;
+    --accent2: #2BB3A3;
+    --sunny: #FFB830;
+    --radius: 20px;
+    --hud-bg: #171E2E;
+    --hud-bg2: #1F2940;
+    --hud-line: rgba(43, 179, 163, 0.35);
+    --hud-text: #D7E3EE;
+    --hud-dim: #7E93A8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Bricolage Grotesque', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+    background:
+      radial-gradient(circle at 10% 5%, rgba(255, 107, 107, 0.08), transparent 40%),
+      radial-gradient(circle at 90% 15%, rgba(43, 179, 163, 0.09), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(255, 184, 48, 0.08), transparent 45%),
+      var(--bg);
+    color: var(--ink);
+    line-height: 1.8;
+    font-size: 17px;
+  }
+
+  .container { max-width: 980px; margin: 0 auto; padding: 0 1.4rem; }
+  .ico { width: 1em; height: 1em; vertical-align: -0.12em; }
+  .h-ico {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 12px; margin-right: 0.6rem;
+    background: linear-gradient(135deg, var(--accent), var(--sunny));
+    color: #fff; vertical-align: -0.35em;
+    box-shadow: 0 6px 14px rgba(255, 107, 107, 0.3);
+  }
+  .h-ico.teal { background: linear-gradient(135deg, var(--accent2), #5fd4c6); box-shadow: 0 6px 14px rgba(43, 179, 163, 0.3); }
+  .h-ico svg { width: 24px; height: 24px; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255, 249, 240, 0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+  nav .container { display: flex; align-items: center; gap: 1.2rem; padding: 0.6rem 1.4rem; flex-wrap: wrap; }
+  nav .logo { display: inline-flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 1.15rem; color: var(--accent); text-decoration: none; white-space: nowrap; }
+  nav .logo svg { width: 24px; height: 24px; }
+  nav .links { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-left: auto; }
+  nav .links a {
+    text-decoration: none; color: var(--muted); font-size: 0.88rem;
+    padding: 0.3rem 0.7rem; border-radius: 999px; transition: all 0.2s;
+  }
+  nav .links a:hover { background: var(--accent); color: #fff; }
+
+  header.hero { padding: 3.5rem 0 2rem; text-align: center; position: relative; }
+  .hero h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 700; line-height: 1.25; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero .circuit { color: var(--accent2); opacity: 0.9; }
+  .hero p.sub { color: var(--muted); font-size: 1.15rem; margin: 1rem auto 1.8rem; max-width: 640px; }
+  .hero img { width: 100%; max-width: 780px; border-radius: var(--radius); border: 3px solid #fff; box-shadow: 0 20px 50px rgba(255, 107, 107, 0.18); }
+  .hero .cta {
+    display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1.6rem;
+    background: var(--accent); color: #fff; text-decoration: none; padding: 0.8rem 2rem;
+    border-radius: 999px; font-weight: 700; box-shadow: 0 8px 20px rgba(255, 107, 107, 0.35); transition: transform 0.2s;
+  }
+  .hero .cta:hover { transform: translateY(-3px) scale(1.03); }
+  .hero .cta svg { width: 20px; height: 20px; }
+
+  section { padding: 3.5rem 0; }
+  .station-tag {
+    display: inline-block; background: linear-gradient(135deg, var(--accent), var(--sunny));
+    color: #fff; font-size: 0.85rem; font-weight: 700; padding: 0.25rem 0.9rem;
+    border-radius: 999px; letter-spacing: 0.15em; margin-bottom: 0.8rem;
+    font-family: 'Bricolage Grotesque', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  .station-tag.teal { background: linear-gradient(135deg, var(--accent2), #5fd4c6); }
+  h2 { font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 700; margin-bottom: 1rem; }
+  h3 { font-size: 1.25rem; margin: 1.6rem 0 0.6rem; color: var(--accent2); }
+  section > .container > p, .lead { max-width: 720px; }
+  mark.key { background: none; color: var(--accent); font-weight: 700; }
+
+  .card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 107, 107, 0.12);
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    box-shadow: 0 8px 24px rgba(255, 107, 107, 0.07);
+  }
+
+  .flip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 1.6rem; }
+  .flip-card { perspective: 1000px; height: 190px; cursor: pointer; }
+  .flip-inner {
+    position: relative; width: 100%; height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+  .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+  .flip-face {
+    position: absolute; inset: 0; backface-visibility: hidden;
+    border-radius: var(--radius); display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem; text-align: center;
+  }
+  .flip-front { background: #fff; border: 2px dashed var(--accent2); }
+  .flip-front .fico {
+    width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(43,179,163,0.12), rgba(255,184,48,0.14)); color: var(--accent2);
+  }
+  .flip-front .fico svg { width: 32px; height: 32px; }
+  .flip-front .name { font-weight: 700; font-size: 1.05rem; }
+  .flip-front .hint { font-size: 0.75rem; color: var(--muted); }
+  .flip-back {
+    background: linear-gradient(135deg, var(--accent2), #45c8b8); color: #fff;
+    transform: rotateY(180deg); font-size: 0.92rem; line-height: 1.6;
+  }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.6rem; }
+  .step {
+    background: #fff; border-radius: var(--radius); padding: 1.3rem 1rem; text-align: center;
+    border: 1px solid var(--rule); position: relative; transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .step:hover { transform: translateY(-6px); box-shadow: 0 14px 30px rgba(43, 179, 163, 0.15); }
+  .step .num {
+    width: 42px; height: 42px; margin: 0 auto 0.6rem; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--sunny)); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem;
+  }
+  .step .t { font-weight: 700; margin-bottom: 0.3rem; }
+  .step .d { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  .figure-row { display: flex; gap: 1.5rem; align-items: center; margin: 2rem 0; }
+  .figure-row img { width: 46%; border-radius: var(--radius); border: 3px solid #fff; box-shadow: 0 12px 30px rgba(43, 179, 163, 0.15); }
+  .figure-row .txt { flex: 1; }
+
+  .lab {
+    border: none; padding: 0; overflow: hidden;
+    background: var(--hud-bg);
+    color: var(--hud-text);
+    box-shadow: 0 20px 50px rgba(23, 30, 46, 0.35);
+  }
+  .lab-head { padding: 1.4rem 1.6rem 0.6rem; }
+  .lab-head h3 { color: #fff; margin: 0.4rem 0 0.3rem; }
+  .lab-head p { color: var(--hud-dim); font-size: 0.92rem; }
+  .lab-badge {
+    display: inline-block; font-size: 0.72rem; letter-spacing: 0.25em; font-weight: 700;
+    color: var(--accent2); border: 1px solid var(--hud-line); padding: 0.15rem 0.7rem; border-radius: 4px;
+    background: rgba(43, 179, 163, 0.08);
+  }
+  .hud { display: flex; gap: 1px; background: rgba(255,255,255,0.06); margin-top: 1rem; }
+  .hud-panel {
+    flex: 1; min-width: 280px; padding: 1.4rem 1.6rem 1.6rem;
+    background:
+      linear-gradient(rgba(43,179,163,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43,179,163,0.04) 1px, transparent 1px),
+      var(--hud-bg);
+    background-size: 28px 28px, 28px 28px, auto;
+  }
+  .hud-title {
+    font-size: 0.72rem; letter-spacing: 0.3em; color: var(--hud-dim); font-weight: 700;
+    margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+  }
+  .hud-title::before { content: ""; width: 8px; height: 8px; background: var(--accent2); border-radius: 2px; box-shadow: 0 0 8px var(--accent2); }
+  .feed-row { display: flex; gap: 0.7rem; flex-wrap: wrap; }
+  .feed-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem; background: var(--hud-bg2); border: 1px solid var(--hud-line); color: var(--hud-text);
+    border-radius: 12px; padding: 0.65rem 1rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.18s;
+  }
+  .feed-btn:hover { border-color: var(--accent2); box-shadow: 0 0 14px rgba(43,179,163,0.35); transform: translateY(-2px); }
+  .feed-btn:active { transform: scale(0.96); }
+  .feed-btn svg { width: 26px; height: 26px; }
+  .feed-btn b { color: var(--sunny); font-size: 1.05rem; }
+
+  .mem { margin-top: 1.1rem; display: grid; gap: 0.55rem; }
+  .mem-row { display: flex; align-items: center; gap: 0.7rem; font-size: 0.85rem; color: var(--hud-dim); }
+  .mem-row > span { width: 4.2em; flex-shrink: 0; }
+  .dots { display: flex; gap: 5px; flex-wrap: wrap; min-height: 12px; }
+  .dots i {
+    width: 12px; height: 12px; border-radius: 3px; display: inline-block;
+    animation: dotIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .dots.apple i { background: var(--accent); box-shadow: 0 0 6px rgba(255,107,107,0.7); }
+  .dots.banana i { background: var(--sunny); box-shadow: 0 0 6px rgba(255,184,48,0.7); }
+  @keyframes dotIn { from { transform: scale(0); } to { transform: scale(1); } }
+
+  .level { margin-top: 1.2rem; font-size: 0.85rem; color: var(--hud-dim); }
+  .level-row { display: flex; align-items: center; gap: 0.7rem; margin-top: 0.3rem; }
+  .level-bar { flex: 1; height: 10px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+  .level-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent2), var(--sunny)); transition: width 0.5s ease; border-radius: 999px; box-shadow: 0 0 10px rgba(43,179,163,0.6); }
+  .level-text { color: var(--sunny); font-weight: 700; white-space: nowrap; }
+
+  .feed-actions { margin-top: 1.3rem; display: flex; gap: 0.7rem; align-items: center; flex-wrap: wrap; }
+  .btn-test {
+    background: linear-gradient(135deg, var(--accent2), #3fd0be); color: #08251F; border: none;
+    border-radius: 12px; padding: 0.75rem 1.4rem; font-size: 1rem; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: all 0.18s; letter-spacing: 0.05em;
+    box-shadow: 0 0 18px rgba(43,179,163,0.4);
+  }
+  .btn-test:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 0 26px rgba(43,179,163,0.65); }
+  .btn-test:disabled { opacity: 0.35; cursor: not-allowed; box-shadow: none; }
+  .btn-reset {
+    background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--hud-dim);
+    border-radius: 10px; padding: 0.55rem 1rem; font-size: 0.82rem; cursor: pointer; font-family: inherit;
+  }
+  .btn-reset:hover { color: var(--hud-text); border-color: rgba(255,255,255,0.35); }
+
+  .core-panel { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden; }
+  .core { position: relative; width: 120px; height: 120px; margin: 0.2rem auto 0.6rem; }
+  .core .ring { position: absolute; inset: 0; border-radius: 50%; border: 2px dashed var(--hud-line); animation: spin 14s linear infinite; }
+  .core .ring.r2 { inset: 12px; border-color: rgba(255,184,48,0.3); animation-duration: 9s; animation-direction: reverse; }
+  .core .ring.r3 { inset: 24px; border-style: solid; border-color: rgba(43,179,163,0.25); animation-duration: 20s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .core .core-face {
+    position: absolute; inset: 34px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #2E3D5C, var(--hud-bg2));
+    border: 2px solid var(--hud-line); display: flex; align-items: center; justify-content: center;
+    transition: box-shadow 0.4s;
+  }
+  .core.awake .core-face { box-shadow: 0 0 24px rgba(43,179,163,0.5); }
+  .core.thinking .core-face { animation: pulse 0.7s ease-in-out infinite alternate; }
+  @keyframes pulse { from { box-shadow: 0 0 10px rgba(255,184,48,0.3); } to { box-shadow: 0 0 30px rgba(255,184,48,0.8); } }
+  .core-face svg { width: 34px; height: 34px; color: var(--accent2); }
+  .core.thinking .core-face svg { color: var(--sunny); }
+
+  .core-speech { min-height: 3.2em; font-weight: 700; font-size: 0.95rem; color: var(--hud-text); max-width: 300px; }
+  .scanner {
+    position: relative; width: 130px; height: 96px; margin: 0.5rem auto;
+    border: 1px solid var(--hud-line); border-radius: 12px;
+    background: rgba(43,179,163,0.05);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .scanner .scan-q { font-size: 2rem; font-weight: 700; color: var(--hud-dim); animation: blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 0%,100% { opacity: 0.25; } 50% { opacity: 0.9; } }
+  .scanner svg { width: 58px; height: 58px; animation: dotIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .scanner .scan-line {
+    position: absolute; left: 0; right: 0; top: -4px; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent2), transparent);
+    opacity: 0; box-shadow: 0 0 12px var(--accent2);
+  }
+  .scanner.scanning .scan-line { opacity: 1; animation: scan 0.55s linear 2; }
+  @keyframes scan { from { top: -4px; } to { top: 100%; } }
+  .conf { width: 100%; max-width: 300px; margin-top: 0.4rem; }
+  .conf-top { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--hud-dim); margin-bottom: 0.3rem; }
+  .conf-top b { color: var(--sunny); font-size: 1rem; }
+  .conf-bar { height: 12px; background: rgba(255,255,255,0.08); border-radius: 999px; overflow: hidden; }
+  .conf-fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--accent2), var(--sunny)); transition: width 0.8s ease; box-shadow: 0 0 10px rgba(255,184,48,0.5); }
+
+  .score-row { display: flex; gap: 1.4rem; margin-top: 1rem; font-size: 0.8rem; color: var(--hud-dim); }
+  .score-row b { display: block; font-size: 1.4rem; color: #fff; font-weight: 700; }
+  .score-row .streak b { color: var(--sunny); }
+  .fly-chip { position: fixed; z-index: 200; width: 34px; height: 34px; pointer-events: none; transition: transform 0.6s cubic-bezier(0.5, -0.2, 0.3, 1.2), opacity 0.6s; }
+  .fly-chip svg { width: 100%; height: 100%; }
+
+  .confetti-piece { position: absolute; width: 9px; height: 9px; border-radius: 2px; pointer-events: none; z-index: 5; animation: confetti 1.3s ease-out forwards; }
+  @keyframes confetti {
+    0% { transform: translate(0, 0) rotate(0); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; }
+  }
+
+  .nn-card { background: linear-gradient(180deg, rgba(43,179,163,0.05), rgba(255,255,255,0.75)); }
+  .nn-wrap { text-align: center; }
+  .nn-wrap svg { max-width: 640px; width: 100%; height: auto; }
+  .nn-node { fill: #fff; stroke: var(--rule); stroke-width: 2; transition: fill 0.3s, stroke 0.3s; }
+  .nn-node.lit { fill: var(--sunny); stroke: var(--accent); }
+  .nn-edge { stroke: var(--rule); stroke-width: 2; transition: stroke 0.3s; }
+  .nn-edge.lit { stroke: var(--accent2); stroke-width: 3.5; }
+  .nn-label { font-size: 13px; fill: var(--muted); }
+  .big-btn {
+    border: none; border-radius: 12px; padding: 0.75rem 1.6rem; font-size: 1rem;
+    font-weight: 700; cursor: pointer; font-family: inherit; transition: transform 0.15s;
+    background: linear-gradient(135deg, var(--accent2), #3fd0be); color: #08251F;
+    box-shadow: 0 6px 16px rgba(43,179,163,0.35);
+  }
+  .big-btn:hover { transform: translateY(-2px) scale(1.02); }
+  .nn-msg { margin-top: 0.6rem; font-weight: 700; min-height: 1.6em; color: var(--accent2); }
+
+  .tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1.4rem 0 0; }
+  .tab-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    border: 2px solid var(--rule); background: #fff; border-radius: 999px;
+    padding: 0.55rem 1.2rem; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+    font-family: inherit; color: var(--muted); transition: all 0.2s;
+  }
+  .tab-btn svg { width: 17px; height: 17px; }
+  .tab-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; transform: scale(1.05); }
+  .tab-panel { display: none; margin-top: 1.2rem; animation: fadeUp 0.4s ease; }
+  .tab-panel.show { display: flex; gap: 1.4rem; align-items: flex-start; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .tab-panel .big-ico {
+    width: 76px; height: 76px; flex-shrink: 0; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(255,107,107,0.12), rgba(255,184,48,0.14)); color: var(--accent);
+  }
+  .tab-panel .big-ico svg { width: 40px; height: 40px; }
+  .tab-panel .body { flex: 1; }
+  .tab-panel .body h4 { font-size: 1.2rem; margin-bottom: 0.4rem; }
+  .tab-panel .examples { margin-top: 0.7rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tab-panel .examples span { background: var(--bg); border: 1px solid var(--rule); border-radius: 999px; padding: 0.2rem 0.8rem; font-size: 0.85rem; color: var(--muted); }
+
+  .accordion { margin-top: 1.4rem; display: grid; gap: 0.8rem; }
+  .acc-item { background: #fff; border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; }
+  .acc-head {
+    width: 100%; text-align: left; background: none; border: none; padding: 1rem 1.3rem;
+    font-size: 1.05rem; font-weight: 700; cursor: pointer; font-family: inherit;
+    display: flex; justify-content: space-between; align-items: center; color: var(--ink);
+  }
+  .acc-head .arrow { transition: transform 0.3s; color: var(--accent); font-size: 1.2rem; }
+  .acc-item.open .acc-head .arrow { transform: rotate(180deg); }
+  .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .acc-body .inner { padding: 0 1.3rem 1.1rem; color: var(--muted); }
+
+  .quiz-card { border: 2px solid var(--sunny); }
+  .quiz-q { font-size: 1.15rem; font-weight: 700; margin-bottom: 1rem; }
+  .quiz-opts { display: grid; gap: 0.6rem; }
+  .quiz-opt {
+    text-align: left; background: #fff; border: 2px solid var(--rule); border-radius: 14px;
+    padding: 0.8rem 1.1rem; font-size: 1rem; cursor: pointer; font-family: inherit; transition: all 0.2s;
+  }
+  .quiz-opt:hover { border-color: var(--accent2); transform: translateX(4px); }
+  .quiz-opt.correct { border-color: var(--accent2); background: #e6f9f6; }
+  .quiz-opt.wrong { border-color: var(--accent); background: #ffecec; }
+  .quiz-feedback { margin-top: 0.9rem; font-weight: 700; min-height: 1.6em; }
+  .quiz-progress { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+  .quiz-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--rule); }
+  .quiz-dot.done { background: var(--accent2); }
+  .quiz-dot.now { background: var(--sunny); }
+  .quiz-score { text-align: center; padding: 1.5rem 0 0.5rem; }
+  .quiz-score .trophy { width: 64px; height: 64px; color: var(--sunny); }
+  .quiz-score .big { font-size: 3rem; font-weight: 700; color: var(--accent); }
+
+  .link-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 1.6rem; }
+  .link-card {
+    display: block; text-decoration: none; color: var(--ink); background: #fff;
+    border: 1px solid var(--rule); border-radius: var(--radius); padding: 1.4rem 1.2rem;
+    transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+  }
+  .link-card:hover { transform: translateY(-6px); box-shadow: 0 16px 34px rgba(255, 107, 107, 0.16); border-color: var(--accent); }
+  .link-card .lico {
+    width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(43,179,163,0.1), rgba(255,107,107,0.1)); color: var(--accent2);
+  }
+  .link-card .lico svg { width: 28px; height: 28px; }
+  .link-card .t { font-weight: 700; margin: 0.6rem 0 0.3rem; }
+  .link-card .d { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+  .link-card .go { display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 0.7rem; font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+
+  footer {
+    margin-top: 3rem; padding: 2.5rem 0; text-align: center; color: var(--muted);
+    font-size: 0.88rem; border-top: 1px solid var(--rule);
+  }
+
+  .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+
+  body.locked #adventure { display: none; }
+  body.locked nav .links { display: none; }
+  #adventure { animation: unlockFade 0.8s ease; }
+  @keyframes unlockFade { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+  .lock-hint { display: none; margin-top: 1rem; color: var(--muted); font-size: 0.92rem; align-items: center; justify-content: center; gap: 0.4rem; }
+  body.locked .lock-hint { display: flex; }
+  .lock-hint svg { width: 16px; height: 16px; }
+
+  @media (max-width: 760px) {
+    .flip-grid, .link-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .figure-row { flex-direction: column; }
+    .figure-row img { width: 100%; }
+    .tab-panel.show { flex-direction: column; }
+    .hud { flex-direction: column; }
+  }
+  @media (max-width: 480px) {
+    .flip-grid, .link-grid { grid-template-columns: 1fr; }
+    nav .links { display: none; }
+  }
+</style>
+</head>
+<body class="locked">
+<nav>
+  <div class="container">
+    <a class="logo" href="#top">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1"/><circle cx="9.5" cy="13" r="0.8" fill="currentColor"/><circle cx="14.5" cy="13" r="0.8" fill="currentColor"/><path d="M9.5 16.5h5"/></svg>
+      你好，AI！
+    </a>
+    <div class="links">
+      <a href="#around">身边的 AI</a>
+      <a href="#how">AI 怎么学习</a>
+      <a href="#powers">AI 的超能力</a>
+      <a href="#limits">AI 不是万能</a>
+      <a href="#quiz">小测验</a>
+      <a href="#explore">更多探索</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container">
+    <h1>你好，我是 <em>人工智能</em><span class="circuit">！</span></h1>
+    <p class="sub">一个专为小朋友准备的 AI 探险乐园。跟我一起揭开人工智能的神秘面纱——它会看、会听、会想，但它到底是怎么学会这些本领的呢？</p>
+    <img src="assets/hero_2560x1440.jpg" alt="机器人老师和一群好奇的孩子们在一起探索人工智能">
+    <br>
+    <a class="cta" href="#around" id="start-adventure">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c4 3 6 8 5 13l-5 5-5-5c-1-5 1-10 5-13z"/><circle cx="12" cy="9" r="2"/></svg>
+      开始探险
+    </a>
+    <p class="lock-hint">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      后面的探险地图已被锁住，点击上方"开始探险"解锁！
+    </p>
+  </div>
+</header>
+
+<main id="adventure">
+<section id="around">
+  <div class="container">
+    <span class="station-tag">STATION 01 · 第一站</span>
+    <h2><span class="h-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15.3 15.3 21 21"/></svg></span>AI 就在你身边！</h2>
+    <p>你可能觉得人工智能很遥远，其实它早就悄悄住进了我们的生活。<mark class="key">人工智能（AI）就是让电脑像人一样"学习"和"思考"的技术</mark>。点一点下面的卡片，看看它们藏在哪里！</p>
+
+    <div class="flip-grid">
+      <div class="flip-card" tabindex="0"><div class="flip-inner">
+        <div class="flip-face flip-front"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><path d="M12 19v3"/></svg></span><span class="name">语音助手</span><span class="hint">点我翻面</span></div>
+        <div class="flip-face flip-back">小爱同学、Siri、天猫精灵……你说话，它就能听懂并回答，还能帮你定闹钟、讲故事！</div>
+      </div></div>
+      <div class="flip-card" tabindex="0"><div class="flip-inner">
+        <div class="flip-face flip-front"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/></svg></span><span class="name">拍照识物</span><span class="hint">点我翻面</span></div>
+        <div class="flip-face flip-back">对着一朵花拍张照，手机就能告诉你它的名字；刷脸解锁手机也是 AI 的功劳。</div>
+      </div></div>
+      <div class="flip-card" tabindex="0"><div class="flip-inner">
+        <div class="flip-face flip-front"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg></span><span class="name">视频推荐</span><span class="hint">点我翻面</span></div>
+        <div class="flip-face flip-back">为什么视频软件总能猜到你爱看什么？因为 AI 记住了你的喜好，帮你挑出感兴趣的内容。</div>
+      </div></div>
+      <div class="flip-card" tabindex="0"><div class="flip-inner">
+        <div class="flip-face flip-front"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></span><span class="name">智能导航</span><span class="hint">点我翻面</span></div>
+        <div class="flip-face flip-back">导航软件会实时计算哪条路不堵车，帮爸爸妈妈选一条最快的回家路线。</div>
+      </div></div>
+      <div class="flip-card" tabindex="0"><div class="flip-inner">
+        <div class="flip-face flip-front"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.5 3 14.5 0 18"/><path d="M12 3c-3 3.5-3 14.5 0 18"/></svg></span><span class="name">翻译软件</span><span class="hint">点我翻面</span></div>
+        <div class="flip-face flip-back">把中文变成英文、日文……AI 翻译让全世界的人都能互相听懂对方说话。</div>
+      </div></div>
+      <div class="flip-card" tabindex="0"><div class="flip-inner">
+        <div class="flip-face flip-front"><span class="fico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><circle cx="12" cy="13" r="3"/><path d="M12 2v3"/></svg></span><span class="name">扫地机器人</span><span class="hint">点我翻面</span></div>
+        <div class="flip-face flip-back">它会自己规划路线、躲开桌椅腿，把地板打扫得干干净净，没电了还会自己回家充电。</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <span class="station-tag teal">STATION 02 · 第二站</span>
+    <h2><span class="h-ico teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></span>AI 是怎么"学会"本领的？</h2>
+    <p>想一想：你小时候是怎么认识"猫"的？没有人给你背定义，而是<mark class="key">看了很多很多猫的照片和真猫</mark>，慢慢就记住了：尖耳朵、长胡须、会"喵喵"叫。<mark class="key">AI 的学习方式和你一模一样</mark>——只不过它看的是成千上万张图片！</p>
+
+    <div class="figure-row">
+      <img src="assets/learning_2240x1680.jpg" alt="机器人正在用放大镜观察许多猫咪和狗狗的照片来学习">
+      <div class="txt">
+        <h3>像小朋友一样从例子中学习</h3>
+        <p>科学家给电脑看成堆的猫咪照片，每张照片都贴上标签"这是猫"。电脑会自己发现规律："哦！原来尖耳朵 + 圆眼睛 + 胡须 = 猫！"这个过程叫做<mark class="key">机器学习</mark>。</p>
+        <p style="margin-top:0.6rem;">看得越多，它就认得越准——就像你做的练习题越多，考试就越有把握！</p>
+      </div>
+    </div>
+
+    <h3>AI 学习的四个步骤</h3>
+    <div class="steps">
+      <div class="step"><div class="num">1</div><div class="t">收集数据</div><div class="d">收集成千上万的例子，比如猫咪照片、各种声音</div></div>
+      <div class="step"><div class="num">2</div><div class="t">寻找规律</div><div class="d">电脑在例子里找共同点：猫都有尖耳朵和胡须</div></div>
+      <div class="step"><div class="num">3</div><div class="t">反复练习</div><div class="d">猜错了就调整，猜对了就记住，练成千上万次</div></div>
+      <div class="step"><div class="num">4</div><div class="t">学会预测</div><div class="d">遇到一张从没见过的新照片，也能认出"这是猫！"</div></div>
+    </div>
+
+    <div class="card lab" style="margin-top:2.5rem;">
+      <div class="lab-head">
+        <span class="lab-badge">AI LAB · 互动实验舱</span>
+        <h3>AI 训练舱：教电脑认水果</h3>
+        <p>现在轮到你来当 AI 的教练！第一步：投喂水果数据；第二步：看它记住的特征；第三步：开启识别考试，看它能拿多少分！</p>
+      </div>
+      <div class="hud">
+        <div class="hud-panel">
+          <div class="hud-title">DATA.FEED · 数据投喂台</div>
+          <div class="feed-row">
+            <button class="feed-btn" id="feed-apple"><svg viewBox="0 0 24 24"><path d="M12 7c-4-2.5-8 .5-8 5 0 4.5 3.5 9 5.5 9 1.2 0 1.6-.6 2.5-.6s1.3.6 2.5.6c2 0 5.5-4.5 5.5-9 0-4.5-4-7.5-8-5z" fill="#FF6B6B"/><path d="M12 7c0-2 1-3.5 3-4" stroke="#8B5E3C" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M12 5c1.5-1.8 3.8-1.6 5 0-1.7 1.2-3.7 1-5 0z" fill="#7BC96F"/></svg>投喂苹果 ×<b id="count-apple">0</b></button>
+            <button class="feed-btn" id="feed-banana"><svg viewBox="0 0 24 24"><path d="M5 5c-1.5 8 4 14 12 14 1.8 0 3-.3 3-.8s-.7-.8-1.4-1.3C14 13.6 10 10.6 8.4 5.6 8 4.4 7.6 3.6 7 3.6 6 3.6 5.3 4.3 5 5z" fill="#FFC53D"/><path d="M7 3.6c.3-.6 1.2-.6 1.5 0l-.4 1.4H7.4z" fill="#8B5E3C"/></svg>投喂香蕉 ×<b id="count-banana">0</b></button>
+          </div>
+          <div class="mem">
+            <div class="mem-row"><span>苹果记忆</span><div class="dots apple" id="dots-apple"></div></div>
+            <div class="mem-row"><span>香蕉记忆</span><div class="dots banana" id="dots-banana"></div></div>
+          </div>
+          <div class="level">
+            <span>训练等级</span>
+            <div class="level-row">
+              <div class="level-bar"><div class="level-fill" id="level-fill"></div></div>
+              <span class="level-text" id="level-text">LV.0 未启蒙</span>
+            </div>
+          </div>
+          <div class="feed-actions">
+            <button class="btn-test" id="test-ai" disabled>开启识别考试</button>
+            <button class="btn-reset" id="reset-lab">重置记忆</button>
+          </div>
+        </div>
+        <div class="hud-panel core-panel" id="core-panel">
+          <div class="hud-title" style="justify-content:center;">MODEL.CORE · AI 核心</div>
+          <div class="core" id="brain">
+            <div class="ring"></div><div class="ring r2"></div><div class="ring r3"></div>
+            <div class="core-face"><svg id="brain-face" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></div>
+          </div>
+          <div class="core-speech" id="brain-speech">等待训练数据……</div>
+          <div class="scanner" id="scanner"><span class="scan-q">?</span><div class="scan-line"></div></div>
+          <div class="conf">
+            <div class="conf-top"><span>置信度 CONFIDENCE</span><b id="conf-num">0%</b></div>
+            <div class="conf-bar"><div class="conf-fill" id="conf-fill"></div></div>
+          </div>
+          <div class="score-row">
+            <div>得分 SCORE<b id="score">0</b></div>
+            <div class="streak">连胜 STREAK<b id="streak">0</b></div>
+            <div>场次 ROUND<b id="rounds">0</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card nn-card" style="margin-top:1.5rem;">
+      <h3 style="margin-top:0;">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--sunny);"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>
+        AI 大脑里的"小灯泡"：神经网络
+      </h3>
+      <p style="color:var(--muted);">科学家模仿人脑里神经元的连接方式，造出了<mark class="key">神经网络</mark>：信息从左边进入，经过一层层"小灯泡"传递和计算，最后在右边得出答案。点击下面的按钮，看看信号是怎么跑动的！</p>
+      <div class="nn-wrap">
+        <svg viewBox="0 0 640 300" id="nn-svg" role="img" aria-label="神经网络示意图">
+          <g id="nn-edges"></g>
+          <g id="nn-nodes"></g>
+          <text class="nn-label" x="90" y="285" text-anchor="middle">输入层（看到的信息）</text>
+          <text class="nn-label" x="320" y="285" text-anchor="middle">隐藏层（动脑筋）</text>
+          <text class="nn-label" x="550" y="285" text-anchor="middle">输出层（答案）</text>
+        </svg>
+        <button class="big-btn" id="nn-run" style="margin-top:0.5rem;">让信号跑一遍</button>
+        <div class="nn-msg" id="nn-msg"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="powers">
+  <div class="container">
+    <span class="station-tag">STATION 03 · 第三站</span>
+    <h2><span class="h-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.3.9-4.5 4.4 1 6.1-5.5-2.9L6.5 20l1-6.1L3 9.5l6.3-.9z"/></svg></span>AI 的五大超能力</h2>
+    <p>经过学习，AI 可以掌握各种各样的本领。点击下面的按钮，看看它都有哪些"超能力"！</p>
+
+    <div class="tabs" id="power-tabs">
+      <button class="tab-btn active" data-tab="see"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg>会看</button>
+      <button class="tab-btn" data-tab="hear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0 1 12 0c0 4-3 4.5-3 8a3 3 0 0 1-6 0"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0"/></svg>会听</button>
+      <button class="tab-btn" data-tab="speak"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/></svg>会说</button>
+      <button class="tab-btn" data-tab="think"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>会想</button>
+      <button class="tab-btn" data-tab="create"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20s1-4 4-6l8-8 2 2-8 8c-2 3-6 4-6 4z"/><path d="M14 6l2-2 2 2-2 2"/></svg>会创造</button>
+    </div>
+
+    <div class="card" style="margin-top:1rem;">
+      <div class="tab-panel show" data-panel="see">
+        <div class="big-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.5"/></svg></div>
+        <div class="body">
+          <h4>计算机视觉 —— AI 的眼睛</h4>
+          <p>AI 能看懂照片和视频：认出人脸、找出照片里的小狗、帮助医生在 X 光片里发现病灶，还能帮无人驾驶汽车看清马路。</p>
+          <div class="examples"><span>刷脸解锁</span><span>拍照识花</span><span>无人驾驶</span><span>医学影像</span></div>
+        </div>
+      </div>
+      <div class="tab-panel" data-panel="hear">
+        <div class="big-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10a6 6 0 0 1 12 0c0 4-3 4.5-3 8a3 3 0 0 1-6 0"/><path d="M9.5 10a2.5 2.5 0 0 1 5 0"/></svg></div>
+        <div class="body">
+          <h4>语音识别 —— AI 的耳朵</h4>
+          <p>AI 能把声音变成文字，听懂你的指令。哪怕有一点口音、背景有点吵，它也能努力听明白你说的话。</p>
+          <div class="examples"><span>语音助手</span><span>听写输入</span><span>智能音箱</span><span>字幕生成</span></div>
+        </div>
+      </div>
+      <div class="tab-panel" data-panel="speak">
+        <div class="big-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H9l-5 4z"/></svg></div>
+        <div class="body">
+          <h4>自然语言处理 —— AI 的嘴巴</h4>
+          <p>AI 能读懂文字、回答问题、陪你聊天、把一种语言翻译成另一种语言，甚至能帮你修改作文里的错别字。</p>
+          <div class="examples"><span>聊天机器人</span><span>机器翻译</span><span>智能问答</span><span>作文批改</span></div>
+        </div>
+      </div>
+      <div class="tab-panel" data-panel="think">
+        <div class="big-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></div>
+        <div class="body">
+          <h4>决策与推理 —— AI 的头脑</h4>
+          <p>AI 会分析大量信息然后做决定：预测明天的天气、规划最快的送货路线，还能在围棋比赛里战胜世界冠军！</p>
+          <div class="examples"><span>天气预报</span><span>路线规划</span><span>下棋对弈</span><span>疾病预测</span></div>
+        </div>
+      </div>
+      <div class="tab-panel" data-panel="create">
+        <div class="big-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20s1-4 4-6l8-8 2 2-8 8c-2 3-6 4-6 4z"/><path d="M14 6l2-2 2 2-2 2"/></svg></div>
+        <div class="body">
+          <h4>生成式 AI —— AI 的想象力</h4>
+          <p>最新的 AI 还会"创作"：你描述一句话，它能画出图画、编出故事、写出诗歌，甚至谱出一首小曲子。你现在看到的这张网页里的插图，就是 AI 画的哦！</p>
+          <div class="examples"><span>AI 绘画</span><span>故事创作</span><span>音乐生成</span><span>视频制作</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="container">
+    <span class="station-tag teal">STATION 04 · 第四站</span>
+    <h2><span class="h-ico teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6z"/><path d="M9.5 12l2 2 3.5-4"/></svg></span>AI 很厉害，但不是万能的</h2>
+    <p>AI 虽然本领大，但它也会犯错，也需要我们正确使用。点开下面的问题，了解真实的 AI。</p>
+
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-head">AI 会犯错吗？<span class="arrow">▼</span></button>
+        <div class="acc-body"><div class="inner">会！如果它学习时看的例子不够多、不够好，它就会判断失误。比如只见过橘猫照片的 AI，可能会把老虎也认成"猫"。所以 AI 给出的答案，我们要学会自己再想一想、查一查。</div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head">AI 有真正的感情吗？<span class="arrow">▼</span></button>
+        <div class="acc-body"><div class="inner">没有。聊天机器人可以对你说"我很开心"，但那只是它模仿人类的说话方式，它并不像你一样真的会开心、难过或想念朋友。真正的友谊和关爱，只有人和人之间才有。</div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head">AI 的"食物"是什么？<span class="arrow">▼</span></button>
+        <div class="acc-body"><div class="inner">是数据！照片、声音、文字都是 AI 的"食物"。如果"吃"的数据太少或有问题，AI 就会"营养不良"，做出错误的判断。这就是为什么科学家要花很大力气准备高质量的数据。</div></div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-head">使用 AI 时要注意什么？<span class="arrow">▼</span></button>
+        <div class="acc-body"><div class="inner">① 不要随便告诉 AI 你的真实姓名、家庭住址、学校等隐私信息；② AI 说的话不一定全对，重要的事情要和爸爸妈妈、老师确认；③ 合理安排时间，不要沉迷和 AI 聊天或刷推荐视频；④ 用 AI 来帮助学习和创造，而不是让它替你写作业哦！</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="quiz">
+  <div class="container">
+    <span class="station-tag">FINAL · 终点站 · 挑战时间</span>
+    <h2><span class="h-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4a3 3 0 0 0 3 5M17 5h3a3 3 0 0 1-3 5"/><path d="M12 14v3M9 21h6M10 17h4v4h-4z"/></svg></span>AI 知识小测验</h2>
+    <p>探险结束啦，来测测你学会了多少！答对所有题目，你就是"AI 小小科学家"！</p>
+
+    <div class="card quiz-card" style="margin-top:1.4rem;">
+      <div class="quiz-progress" id="quiz-progress"></div>
+      <div id="quiz-area">
+        <div class="quiz-q" id="quiz-q"></div>
+        <div class="quiz-opts" id="quiz-opts"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+      </div>
+      <div class="quiz-score" id="quiz-score" style="display:none;">
+        <svg class="trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 5H4a3 3 0 0 0 3 5M17 5h3a3 3 0 0 1-3 5"/><path d="M12 14v3M9 21h6M10 17h4v4h-4z"/></svg>
+        <div class="big" id="quiz-score-text"></div>
+        <p id="quiz-comment" style="color:var(--muted);"></p>
+        <button class="big-btn" id="quiz-retry" style="margin-top:0.8rem;">再玩一次</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="explore">
+  <div class="container">
+    <span class="station-tag teal">BONUS · 课外营地</span>
+    <h2><span class="h-ico teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3.5 3 14.5 0 18"/><path d="M12 3c-3 3.5-3 14.5 0 18"/></svg></span>更多好玩的 AI 探索</h2>
+    <p>下面这些是国内为小朋友们准备的 AI 游乐网站（在爸爸妈妈陪同下访问更合适哦）：</p>
+
+    <div class="link-grid">
+      <a class="link-card" href="https://www.kepuchina.cn/tech/ai/" target="_blank" rel="noopener">
+        <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M19 15H6a2 2 0 0 0-2 2"/></svg></span>
+        <div class="t">科普中国 · 人工智能专区</div>
+        <div class="d">中国科协主办的权威科普平台，这里有好多关于 AI 的趣味文章、漫画和视频。</div>
+        <span class="go">去看看 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="link-card" href="https://www.cdstm.cn/" target="_blank" rel="noopener">
+        <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="12"/><path d="M2 20h20M8 8V4h8v4"/></svg></span>
+        <div class="t">中国数字科技馆</div>
+        <div class="d">把科技馆搬回家！里面有丰富的科学互动展项，还能找到人工智能主题的展览。</div>
+        <span class="go">去看看 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="link-card" href="https://coding.qq.com/" target="_blank" rel="noopener">
+        <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6M16 6l5 6-5 6"/></svg></span>
+        <div class="t">腾讯扣叮</div>
+        <div class="d">腾讯为青少年打造的编程学习平台，用搭积木的方式学编程，还能体验 AI 小实验。</div>
+        <span class="go">去看看 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="link-card" href="https://ai.baidu.com/" target="_blank" rel="noopener">
+        <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15.3 15.3 21 21"/></svg></span>
+        <div class="t">百度 AI 体验中心</div>
+        <div class="d">在线体验 AI 的各种本领：文字识别、语音合成、图像分析……点一点就能玩。</div>
+        <span class="go">去看看 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="link-card" href="https://www.doubao.com/" target="_blank" rel="noopener">
+        <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 8V4"/><circle cx="12" cy="3" r="1"/><circle cx="9.5" cy="13" r="0.8" fill="currentColor"/><circle cx="14.5" cy="13" r="0.8" fill="currentColor"/><path d="M9.5 16.5h5"/></svg></span>
+        <div class="t">豆包</div>
+        <div class="d">字节跳动的 AI 小伙伴，可以问它各种问题、让它讲故事、画画，记得和家长一起使用哦。</div>
+        <span class="go">去看看 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="link-card" href="https://xinghuo.xfyun.cn/" target="_blank" rel="noopener">
+        <span class="lico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2 7 7 3-7 3-2 7-2-7-7-3 7-3z"/></svg></span>
+        <div class="t">讯飞星火</div>
+        <div class="d">科大讯飞的 AI 大模型，能聊天、能写诗、能解题，感受一下国产 AI 的智慧。</div>
+        <span class="go">去看看 <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>「你好，AI！」—— 一个写给小朋友的人工智能科普网页</p>
+    <p style="margin-top:0.4rem;">记住：AI 是我们的好帮手，而你，才是未来的创造者！</p>
+  </div>
+</footer>
+</main>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
